@@ -13,7 +13,7 @@ const tools = {
 };
 
 export async function routeTool(toolName, args) {
-  console.log(`🛠️ Routing to tool: ${toolName}`);
+  console.log(`Routing to tool: ${toolName}`);
   const toolFunction = tools[toolName];
 
   if (!toolFunction) {
