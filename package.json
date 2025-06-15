@@ -1,0 +1,38 @@
+{
+  "name": "groq-ai-agent",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "type": "module",
+  "main": "./out/extension.cjs",
+  "activationEvents": ["onCommand:extension.checkAccessibility"],
+  "contributes": {
+    "commands": [
+      {
+        "command": "extension.checkAccessibility",
+        "title": "Check Accessibility with AI Agent"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "echo 'No compilation needed'",
+    "test": "echo \"No tests yet\"",
+    "build": "node esbuild.config.js",
+    "watch": "node esbuild.config.js --watch",
+    "package": "vsce package"
+  },
+  "dependencies": {
+    "dotenv": "^16.5.0",
+    "node-fetch": "^3.3.2",
+    "openai": "^5.1.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.5",
+    "vscode": "^1.1.37"
+  }
+}
