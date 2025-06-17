@@ -1,4 +1,5 @@
-import { routeTool } from '../route.js';
+import { routeTool } from "../route.js";
+import { extractCodeBlock } from "./extractCodeFromLLM.js";
 
 export async function runAndMerge(code, language = "html") {
   console.log(`\n--- Running accessibility tools on ${language} code ---\n`);
@@ -18,10 +19,11 @@ export async function runAndMerge(code, language = "html") {
     try {
       console.log(`Applying tool: ${tool}`);
       const toolOutput = await routeTool(tool, [currentCode, language]);
+      const cleanedOutput = extractCodeBlock(toolOutput, language);
 
-      if (toolOutput && toolOutput !== currentCode) {
+      if (cleanedOutput && cleanedOutput !== currentCode) {
         console.log(`  -> Tool "${tool}" made modifications.`);
-        currentCode = toolOutput;
+        currentCode = cleanedOutput;
       } else {
         console.log(`  -> Tool "${tool}" made no changes or returned empty.`);
       }

@@ -388,7 +388,6 @@ async function groqChat(prompt) {
     },
     body: JSON.stringify({
       model: "llama3-8b-8192",
-      // or llama3-70b-8192 if enabled
       messages: [{ role: "user", content: prompt }],
       temperature: 0.7
     })
@@ -413,9 +412,7 @@ Provide improved code with necessary changes, without explanations. Ensure the c
 ${code}
 \`\`\`
 `;
-  const response = await groqChat(prompt);
-  console.log("\u{1F9E0} Groq Response (reviewAccessibility):", response);
-  return response;
+  return await groqChat(prompt);
 }
 
 // tools/suggestAriaRoles.js
@@ -479,14 +476,24 @@ var tools = {
   highlightWCAGViolations
 };
 async function routeTool(toolName, args) {
-  console.log(`\u{1F6E0}\uFE0F Routing to tool: ${toolName}`);
+  console.log(`Routing to tool: ${toolName}`);
   const toolFunction = tools[toolName];
   if (!toolFunction) {
     throw new Error(`Tool "${toolName}" not found.`);
   }
   const result = await toolFunction(...args);
-  console.log("\u2705 Tool result:", result);
+  console.log("Tool result:", result);
   return result;
+}
+
+// tools/extractCodeFromLLM.js
+function extractCodeBlock(text, language = "html") {
+  const regex = new RegExp("```" + language + "\\s*([\\s\\S]*?)```", "i");
+  const match = text.match(regex);
+  if (match) {
+    return match[1].trim();
+  }
+  return text.trim();
 }
 
 // tools/index.js
@@ -506,9 +513,10 @@ async function runAndMerge(code, language = "html") {
     try {
       console.log(`Applying tool: ${tool}`);
       const toolOutput = await routeTool(tool, [currentCode, language]);
-      if (toolOutput && toolOutput !== currentCode) {
+      const cleanedOutput = extractCodeBlock(toolOutput, language);
+      if (cleanedOutput && cleanedOutput !== currentCode) {
         console.log(`  -> Tool "${tool}" made modifications.`);
-        currentCode = toolOutput;
+        currentCode = cleanedOutput;
       } else {
         console.log(`  -> Tool "${tool}" made no changes or returned empty.`);
       }
