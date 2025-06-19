@@ -486,7 +486,7 @@ async function routeTool(toolName, args) {
   return result;
 }
 
-// tools/extractCodeFromLLM.js
+// helper/llmUtils.js
 function extractCodeBlock(text, language = "html") {
   const regex = new RegExp("```" + language + "\\s*([\\s\\S]*?)```", "i");
   const match = text.match(regex);

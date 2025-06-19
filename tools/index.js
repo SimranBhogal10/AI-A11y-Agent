@@ -1,5 +1,5 @@
 import { routeTool } from "../route.js";
-import { extractCodeBlock } from "./extractCodeFromLLM.js";
+import { extractCodeBlock } from "../helper/llmUtils.js";
 
 export async function runAndMerge(code, language = "html") {
   console.log(`\n--- Running accessibility tools on ${language} code ---\n`);

@@ -1,4 +1,9 @@
-// Utility to extract the first code block of a given language from a string
+/**
+ * Extracts the first code block of a given language from a string
+ * @param {string} text - The text containing potential code blocks
+ * @param {string} language - The language identifier (e.g., "html", "jsx", "tsx")
+ * @returns {string} - The extracted code or the original text if no code block found
+ */
 export function extractCodeBlock(text, language = "html") {
   // Match the first code block for the given language
   const regex = new RegExp("```" + language + "\\s*([\\s\\S]*?)```", "i");
