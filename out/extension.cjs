@@ -101,7 +101,7 @@ var require_package = __commonJS({
 var require_main = __commonJS({
   "node_modules/dotenv/lib/main.js"(exports2, module2) {
     var fs = require("fs");
-    var path2 = require("path");
+    var path = require("path");
     var os = require("os");
     var crypto = require("crypto");
     var packageJson = require_package();
@@ -212,15 +212,15 @@ var require_main = __commonJS({
           possibleVaultPath = options.path.endsWith(".vault") ? options.path : `${options.path}.vault`;
         }
       } else {
-        possibleVaultPath = path2.resolve(process.cwd(), ".env.vault");
+        possibleVaultPath = path.resolve(process.cwd(), ".env.vault");
       }
       if (fs.existsSync(possibleVaultPath)) {
         return possibleVaultPath;
       }
       return null;
     }
-    function _resolveHome(envPath2) {
-      return envPath2[0] === "~" ? path2.join(os.homedir(), envPath2.slice(1)) : envPath2;
+    function _resolveHome(envPath) {
+      return envPath[0] === "~" ? path.join(os.homedir(), envPath.slice(1)) : envPath;
     }
     function _configVault(options) {
       const debug = Boolean(options && options.debug);
@@ -236,7 +236,7 @@ var require_main = __commonJS({
       return { parsed };
     }
     function configDotenv(options) {
-      const dotenvPath = path2.resolve(process.cwd(), ".env");
+      const dotenvPath = path.resolve(process.cwd(), ".env");
       let encoding = "utf8";
       const debug = Boolean(options && options.debug);
       if (options && options.encoding) {
@@ -259,13 +259,13 @@ var require_main = __commonJS({
       }
       let lastError;
       const parsedAll = {};
-      for (const path3 of optionPaths) {
+      for (const path2 of optionPaths) {
         try {
-          const parsed = DotenvModule.parse(fs.readFileSync(path3, { encoding }));
+          const parsed = DotenvModule.parse(fs.readFileSync(path2, { encoding }));
           DotenvModule.populate(parsedAll, parsed, options);
         } catch (e) {
           if (debug) {
-            _debug(`Failed to load ${path3} ${e.message}`);
+            _debug(`Failed to load ${path2} ${e.message}`);
           }
           lastError = e;
         }
@@ -371,24 +371,24 @@ __export(extension_exports, {
   deactivate: () => deactivate
 });
 module.exports = __toCommonJS(extension_exports);
-var vscode = __toESM(require("vscode"), 1);
+var vscode2 = __toESM(require("vscode"), 1);
 var import_dotenv2 = __toESM(require_main(), 1);
-var import_path = __toESM(require("path"), 1);
 
 // llm/groqClient.js
+var vscode = __toESM(require("vscode"), 1);
 var import_dotenv = __toESM(require_main(), 1);
 import_dotenv.default.config();
+var groqApiKey = vscode.workspace.getConfiguration().get("a11yAgent.groqApiKey");
 async function groqChat(prompt) {
   var _a, _b, _c;
   const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+      "Authorization": `Bearer ${groqApiKey}`,
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
       model: "llama3-8b-8192",
-      // or llama3-70b-8192 if enabled
       messages: [{ role: "user", content: prompt }],
       temperature: 0.7
     })
@@ -413,9 +413,7 @@ Provide improved code with necessary changes, without explanations. Ensure the c
 ${code}
 \`\`\`
 `;
-  const response = await groqChat(prompt);
-  console.log("\u{1F9E0} Groq Response (reviewAccessibility):", response);
-  return response;
+  return await groqChat(prompt);
 }
 
 // tools/suggestAriaRoles.js
@@ -479,13 +477,13 @@ var tools = {
   highlightWCAGViolations
 };
 async function routeTool(toolName, args) {
-  console.log(`\u{1F6E0}\uFE0F Routing to tool: ${toolName}`);
+  console.log(`Routing to tool: ${toolName}`);
   const toolFunction = tools[toolName];
   if (!toolFunction) {
     throw new Error(`Tool "${toolName}" not found.`);
   }
   const result = await toolFunction(...args);
-  console.log("\u2705 Tool result:", result);
+  console.log("Tool result:", result);
   return result;
 }
 
@@ -522,24 +520,20 @@ async function runAndMerge(code, language = "html") {
 }
 
 // extension.js
-var envPath = import_path.default.resolve(__dirname, "../.env");
-console.log(`Loading .env from: ${envPath}`);
-import_dotenv2.default.config({ path: envPath });
-console.log("GROQ_API_KEY loaded:", process.env.GROQ_API_KEY ? "Yes" : "No");
 function activate(context) {
   console.log("Accessibility AI Agent extension is active!");
-  let disposable = vscode.commands.registerCommand("extension.checkAccessibility", async () => {
-    const editor = vscode.window.activeTextEditor;
+  let disposable = vscode2.commands.registerCommand("extension.checkAccessibility", async () => {
+    const editor = vscode2.window.activeTextEditor;
     console.log("Active editor:", editor);
     if (!editor) {
-      vscode.window.showInformationMessage("Please open a code file first.");
+      vscode2.window.showInformationMessage("Please open a code file first.");
       return;
     }
     const originalCode = editor.document.getText();
     const languageId = editor.document.languageId;
-    vscode.window.withProgress(
+    vscode2.window.withProgress(
       {
-        location: vscode.ProgressLocation.Notification,
+        location: vscode2.ProgressLocation.Notification,
         title: "Improving accessibility with AI...",
         cancellable: false
       },
@@ -549,20 +543,20 @@ function activate(context) {
           const improvedCode = await runAndMerge(originalCode);
           console.log("runAndMerge returned.");
           if (!improvedCode || improvedCode === originalCode) {
-            vscode.window.showInformationMessage("No accessibility improvements suggested.");
+            vscode2.window.showInformationMessage("No accessibility improvements suggested.");
             return;
           }
-          const fullRange = new vscode.Range(
+          const fullRange = new vscode2.Range(
             editor.document.positionAt(0),
             editor.document.positionAt(originalCode.length)
           );
           await editor.edit((editBuilder) => {
             editBuilder.replace(fullRange, improvedCode);
           });
-          vscode.window.showInformationMessage("Accessibility improvements applied!");
+          vscode2.window.showInformationMessage("Accessibility improvements applied!");
           console.log("Improved code displayed.");
         } catch (err) {
-          vscode.window.showErrorMessage(`Error: ${err.message || err}`);
+          vscode2.window.showErrorMessage(`Error: ${err.message || err}`);
           console.error("Error during accessibility check:", err);
         }
       }

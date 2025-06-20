@@ -1,11 +1,14 @@
+import * as vscode from "vscode";
 import dotenv from "dotenv";
 dotenv.config();
+
+const groqApiKey = vscode.workspace.getConfiguration().get("a11yAgent.groqApiKey");
 
 export async function groqChat(prompt) {
   const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${process.env.GROQ_API_KEY}`,
+      "Authorization": `Bearer ${groqApiKey}`,
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
