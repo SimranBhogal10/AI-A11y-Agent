@@ -1,6 +1,7 @@
 {
-  "name": "groq-ai-agent",
-  "version": "1.0.0",
+  "name": "ai-a11y-agent",
+  "version": "2.0.0",
+  "publisher": "SimranBhogal", 
   "engines": {
     "vscode": "^1.75.0"
   },
@@ -11,6 +12,17 @@
   "main": "./out/extension.cjs",
   "activationEvents": ["onCommand:extension.checkAccessibility"],
   "contributes": {
+    "configuration": {
+    "title": "Accessibility AI Agent",
+    "properties": {
+      "a11yAgent.groqApiKey": {
+        "type": "string",
+        "default": "",
+        "description": "Your Groq API key for accessibility analysis.",
+        "scope": "application"
+      }
+    }
+  },
     "commands": [
       {
         "command": "extension.checkAccessibility",
