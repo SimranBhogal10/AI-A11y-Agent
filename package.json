@@ -1,6 +1,6 @@
 {
   "name": "ai-a11y-agent",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "publisher": "SimranBhogal", 
   "engines": {
     "vscode": "^1.75.0"

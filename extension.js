@@ -3,13 +3,13 @@ import dotenv from "dotenv";
 import path from "path"; 
 
 //For local development, uncomment the following lines to load .env file
-// const envPath = path.resolve(__dirname, '../.env'); 
+const envPath = path.resolve(__dirname, '../.env'); 
 
-// console.log(`Loading .env from: ${envPath}`);
+console.log(`Loading .env from: ${envPath}`);
 
-// dotenv.config({ path: envPath });
+dotenv.config({ path: envPath });
 
-// console.log('GROQ_API_KEY loaded:', process.env.GROQ_API_KEY ? 'Yes' : 'No'); 
+console.log('GROQ_API_KEY loaded:', process.env.GROQ_API_KEY ? 'Yes' : 'No'); 
 
 import { runAndMerge } from "./tools/index";
 
