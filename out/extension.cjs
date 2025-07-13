@@ -487,6 +487,16 @@ async function routeTool(toolName, args) {
   return result;
 }
 
+// helper/llmUtils.js
+function extractCodeBlock(text, language = "html") {
+  const regex = new RegExp("```" + language + "\\s*([\\s\\S]*?)```", "i");
+  const match = text.match(regex);
+  if (match) {
+    return match[1].trim();
+  }
+  return text.trim();
+}
+
 // tools/index.js
 async function runAndMerge(code, language = "html") {
   console.log(`
@@ -504,9 +514,10 @@ async function runAndMerge(code, language = "html") {
     try {
       console.log(`Applying tool: ${tool}`);
       const toolOutput = await routeTool(tool, [currentCode, language]);
-      if (toolOutput && toolOutput !== currentCode) {
+      const cleanedOutput = extractCodeBlock(toolOutput, language);
+      if (cleanedOutput && cleanedOutput !== currentCode) {
         console.log(`  -> Tool "${tool}" made modifications.`);
-        currentCode = toolOutput;
+        currentCode = cleanedOutput;
       } else {
         console.log(`  -> Tool "${tool}" made no changes or returned empty.`);
       }
